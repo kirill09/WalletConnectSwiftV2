@@ -161,7 +161,7 @@ extension AnyCodable: Decodable, Encodable {
             } else if let stringVal = try? container.decode(String.self) {
                 value = stringVal
             } else if container.decodeNil() {
-                throw AnyCodableError.nullFound
+                value = NSNull()
             } else {
                 throw DecodingError.dataCorruptedError(in: container, debugDescription: "The container contains nothing serializable.")
             }
@@ -187,7 +187,8 @@ extension AnyCodable: Decodable, Encodable {
                 try container.encode(decodable, forKey: codingKey)
             }
         } else if value is NSNull {
-            // ignoring that key
+          var container = encoder.singleValueContainer()
+          try container.encodeNil()
         } else {
             var container = encoder.singleValueContainer()
             if let intVal = value as? Int {
